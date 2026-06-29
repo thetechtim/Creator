@@ -1,35 +1,48 @@
-# This example requires the 'message_content' intent.
 import os
 
 import discord
+from discord.ext import commands
+from discord import app_commands
 from dotenv import load_dotenv
 
 load_dotenv()
 
-TOKEN = os.getenv("TOKEN")
+TOKEN = os.getenv("CREATOR_TOKEN")
 
 intents = discord.Intents.default()
 intents.message_content = True
 
-client = discord.Client(intents=intents)
+bot = commands.Bot(command_prefix="!", intents=intents)
 
-@client.event
+@bot.event
 async def on_ready():
-    # Status setzen
-    await client.change_presence(
+    await bot.change_presence(
         status=discord.Status.online,
-        activity=discord.Game(name="$hello")
+        activity=discord.Game(name="!ping | /hello")
     )
 
-    print(f'We have logged in as {client.user}')
+    try:
+        synced = await bot.tree.sync()
+        print(f"{len(synced)} Slash Commands synchronisiert.")
+    except Exception as e:
+        print(e)
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
+    print(f"Angemeldet als {bot.user}")
 
-    if message.content.startswith('$hello'):
-        await message.channel.send('Hello!')
+# -----------------
+# Präfix-Befehl
+# !ping
+# -----------------
+@bot.command()
+async def ping(ctx):
+    await ctx.send("🏓 Pong!")
 
-client.run(TOKEN) # pyright: ignore[reportArgumentType]
+# -----------------
+# Slash Command
+# /hello
+# -----------------
+@bot.tree.command(name="hello", description="Sagt Hallo.")
+async def hello(interaction: discord.Interaction):
+    await interaction.response.send_message("👋 Hallo!")
 
+bot.run(TOKEN)
