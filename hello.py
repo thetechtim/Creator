@@ -1,0 +1,35 @@
+# This example requires the 'message_content' intent.
+import os
+
+import discord
+from dotenv import load_dotenv
+
+load_dotenv()
+
+TOKEN = os.getenv("TOKEN")
+
+intents = discord.Intents.default()
+intents.message_content = True
+
+client = discord.Client(intents=intents)
+
+@client.event
+async def on_ready():
+    # Status setzen
+    await client.change_presence(
+        status=discord.Status.online,
+        activity=discord.Game(name="$hello")
+    )
+
+    print(f'We have logged in as {client.user}')
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+
+    if message.content.startswith('$hello'):
+        await message.channel.send('Hello!')
+
+client.run(TOKEN) # pyright: ignore[reportArgumentType]
+
