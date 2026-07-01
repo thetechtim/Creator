@@ -119,7 +119,7 @@ Mitglied entfernt Reaktion → Rolle wird entfernt → DM an Mitglied
 ## 📁 Dateistruktur
 
 ```
-discord-role-bot/
+Creator/
 ├── bot.py           # Hauptlogik des Bots
 ├── config.py        # Konfiguration (Token, Rollen, Kanal-IDs)
 ├── requirements.txt # Python-Abhängigkeiten
